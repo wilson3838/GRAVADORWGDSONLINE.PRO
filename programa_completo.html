@@ -1,0 +1,155 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>GRAVADORWGDSONLINE.PRO</title>
+    <style>
+        body {
+            background: linear-gradient(to right, #141e30, #243b55);
+            font-family: Arial, sans-serif;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #00ffff;
+        }
+
+        video {
+            border: 2px solid #00ffff;
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 12px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .start {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .stop {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .download {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .options {
+            margin-top: 20px;
+        }
+
+        .timer {
+            font-size: 20px;
+            color: #00ffff;
+            margin-top: 20px;
+        }
+
+        .relogio {
+            font-size: 18px;
+            margin-top: 10px;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <h1>GRAVADORWGDSONLINE.PRO</h1>
+
+    <!-- ✅ Silenciado para remover eco -->
+    <video id="preview" autoplay playsinline muted></video>
+
+    <div class="options">
+        <button class="start" onclick="iniciarCaptura()">Iniciar Captura</button>
+        <button class="start" onclick="iniciarGravacao()">Iniciar Gravação</button>
+        <button class="stop" onclick="pararGravacao()">Encerrar Gravação</button>
+        <a id="downloadLink" class="download" style="display:none;" download="gravacao.webm">Baixar Gravação</a>
+    </div>
+
+    <div class="timer" id="timer">00:00</div>
+    <div class="relogio" id="horaAtual"></div>
+
+    <script>
+        let mediaStream = null;
+        let mediaRecorder = null;
+        let chunks = [];
+        let tempoGravacao = 0;
+        let cronometroInterval;
+
+        async function iniciarCaptura() {
+            try {
+                mediaStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+                document.getElementById('preview').srcObject = mediaStream;
+            } catch (err) {
+                alert("Erro ao iniciar captura: " + err);
+            }
+        }
+
+        function iniciarGravacao() {
+            if (!mediaStream) {
+                alert("Inicie a captura primeiro!");
+                return;
+            }
+
+            chunks = [];
+            mediaRecorder = new MediaRecorder(mediaStream);
+            mediaRecorder.ondataavailable = e => chunks.push(e.data);
+            mediaRecorder.onstop = () => {
+                const blob = new Blob(chunks, { type: 'video/webm' });
+                const url = URL.createObjectURL(blob);
+                const link = document.getElementById('downloadLink');
+                link.href = url;
+                link.style.display = 'inline-block';
+            };
+            mediaRecorder.start();
+
+            tempoGravacao = 0;
+            cronometroInterval = setInterval(() => {
+                tempoGravacao++;
+                const minutos = Math.floor(tempoGravacao / 60);
+                const segundos = tempoGravacao % 60;
+                document.getElementById('timer').innerText = `${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        function pararGravacao() {
+            if (mediaRecorder && mediaRecorder.state !== "inactive") {
+                mediaRecorder.stop();
+                clearInterval(cronometroInterval);
+            }
+        }
+
+        function atualizarHora() {
+            const agora = new Date();
+            const horas = agora.getHours().toString().padStart(2, '0');
+            const minutos = agora.getMinutes().toString().padStart(2, '0');
+            const segundos = agora.getSeconds().toString().padStart(2, '0');
+            document.getElementById("horaAtual").innerText = `Hora atual: ${horas}:${minutos}:${segundos}`;
+        }
+
+        setInterval(atualizarHora, 1000);
+
+        window.onload = function () {
+            const autenticado = sessionStorage.getItem("logado");
+            if (autenticado !== "true") {
+                window.location.href = "index.html";
+            }
+            atualizarHora();
+        };
+    </script>
+</body>
+</html>

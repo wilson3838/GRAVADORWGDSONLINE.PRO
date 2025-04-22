@@ -1,0 +1,110 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>GRAVADORWGDSONLINE.PRO</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+            color: white;
+            text-align: center;
+            padding: 30px;
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: #1e1e1e;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+        }
+
+        input {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 6px;
+            border: none;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 12px 20px;
+            background-color: #00cc99;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .info {
+            margin-top: 20px;
+            font-size: 15px;
+        }
+
+            .info strong {
+                color: #00ffcc;
+            }
+
+        footer {
+            margin-top: 30px;
+            font-size: 13px;
+            color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>GRAVADORWGDSONLINE.PRO</h1>
+        <p><strong>Valor do Programa: R$29,90</strong></p>
+
+        <form onsubmit="logar(event)">
+            <input type="text" id="login" placeholder="LOGIN" required>
+            <input type="password" id="senha" placeholder="SENHA" required>
+            <button type="submit">ENTRAR</button>
+        </form>
+
+        <div class="info">
+            <p><strong>PIX:</strong> 36671733856</p>
+            <p><strong>WhatsApp:</strong> (14) 99680-8574</p>
+        </div>
+    </div>
+
+    <footer>
+        © 2025 GRAVADORWGDSONLINE.PRO - Todos os direitos reservados
+    </footer>
+
+    <script>
+        function logar(event) {
+            event.preventDefault();
+            const login = document.getElementById("login").value.trim().toUpperCase();
+            const senha = document.getElementById("senha").value.trim();
+
+            if (login === "SEFERT2025" && senha === "TATICA.SEG2025@") {
+                sessionStorage.setItem("logado", "true");
+                window.location.href = "programa_completo.html";
+            } else {
+                alert("Login ou senha inválidos!");
+            }
+        }
+
+        window.onload = function () {
+            if (window.location.pathname.includes("programa_completo.html")) {
+                const autenticado = sessionStorage.getItem("logado");
+                if (autenticado !== "true") {
+                    window.location.href = "index.html";
+                }
+            }
+        };
+    </script>
+</body>
+</html>
